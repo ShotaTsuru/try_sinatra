@@ -13,10 +13,13 @@ class Memo
   end
 end
 
+
+def pick_up_file
+end
+
 # topページへ
 get '/memo' do
   memos = JSON::Parser.new(File.open('./data/sample.json').read, object_class: Memo)
-  binding.irb
   @memos = memos.parse
   erb :index
 end
@@ -27,8 +30,7 @@ end
 
 # 投稿の保存処理
 post '/memo' do
-  memos = JSON::Parser.new(File.open('./data/sample.json').read)
-  memos_a = memos.parse
+  memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
   params[:id] = memos_a[-1]["id"] + 1
   memos_a << params
   File.open('./data/sample.json', "w") do |f|
@@ -51,12 +53,21 @@ delete '/memo/*/' do
 end
 
 # 編集ページへ
-get '/memo/*/edit' do
+get '/memo/:id/edit' do
+  memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
+  memo = memos.select {|n| n["id"] == params[:id].to_i}
+  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
   erb :edit
 end
 
 # 編集処理
-patch '/memo/*' do
+patch '/memo/:id' do
+  memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
+  memos_a.map!{|a| a["id"] == params["id"].to_i ? params : a}
+  binding.irb
+  File.open('./data/sample.json', "w") do |f|
+    JSON.dump(memos_a, f)
+  end
   redirect to('/memo')
 end
 

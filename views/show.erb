@@ -5,9 +5,6 @@
       <a class="btn" href="/memo/new">add memo</a>
     </div>
   </div>
-  <div class="test">
-  aaaaaaaa
-  </div>
 </header>
 <section class="text">
   <h2>
@@ -17,6 +14,18 @@
     <%= @memo.text %>
   </div>
 </section>
+
+<section>
+  <div class=edit_box>
+    <div class="edit_btn">
+      <a class="btn" href=<%="/memo/#{@memo.id}/edit"%>>edit</a>
+    </div>
+    <div class="edit_btn">
+      <a class="btn" href=<%="/memo/#{@memo.id}"%> method="delete">delete</a>
+    </div>
+  </div>
+</section>
+
 <div>
   <a href="/memo">topページ</a>
 </div>

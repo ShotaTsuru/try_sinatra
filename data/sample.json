@@ -1,1 +1,1 @@
-[{"id":1,"title":"aaaaaaa","text":"aaaaaa"},{"title":"aaa","text":"aaaaaa","id":2},{"title":"xxxxxx","text":"azzzzzzzzzzzzzz","id":3}]
+[{"title":"変更済み","text":"変更済み","_method":"patch","id":"1"},{"title":"aaa","text":"aaaaaa","id":2},{"title":"xxxxxx","text":"azzzzzzzzzzzzzz","id":3},{"title":"test","text":"aaaa","id":4}]
