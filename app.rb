@@ -8,13 +8,16 @@ require 'json'
 
 class Memo
   attr_accessor :id, :text, :title
+  def []=(key, value)
+    instance_variable_set("@#{key}", value)
+  end
 end
 
 # topページへ
 get '/memo' do
   memos = JSON::Parser.new(File.open('./data/sample.json').read, object_class: Memo)
+  binding.irb
   @memos = memos.parse
-
   erb :index
 end
 # 新規投稿ページへ
@@ -35,7 +38,10 @@ post '/memo' do
 end
 
 # 詳細ページへ
-get '/memo/*' do
+get '/memo/:id' do
+  memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
+  memo = memos.select {|n| n["id"] == params[:id].to_i}
+  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
   erb :show
 end
 

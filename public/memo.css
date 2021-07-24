@@ -1,5 +1,6 @@
 body {
   padding: 20px;
+  height: 100%;
 }
 
 .header_box {
@@ -13,8 +14,8 @@ body {
   margin-right: 10px;
   background-color: black;
   padding: 20px 10px;
-
 }
+
 .btn {
   font-size: 18px;
   text-decoration: none;
@@ -23,4 +24,8 @@ body {
 
 .memo_content {
   padding: 20px 10px;
+}
+
+section {
+  margin: 20px;
 }

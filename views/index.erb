@@ -10,7 +10,7 @@
   <div class="memo_content">
     <% @memos.each do |memo| %>
       <div class="memo_content">
-        <a class="memo" href=<%="/memo/#{memo.id}/edit"%>>
+        <a class="memo" href=<%="/memo/#{memo.id}"%>>
           <%= memo.title %>
         </a>
       </div>
