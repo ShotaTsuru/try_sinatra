@@ -8,10 +8,10 @@
 </header>
 <section class="text">
   <h2>
-    <%= @memo.title %>
+    <%= escape(@memo.title) %>
   </h2>
   <div>
-    <%= @memo.text %>
+    <%= escape(@memo.text) %>
   </div>
 </section>
 

@@ -11,7 +11,7 @@
     <% @memos.each do |memo| %>
       <div class="memo_content">
         <a class="memo" href=<%="/memo/#{memo.id}"%>>
-          <%= memo.title %>
+          <%= escape(memo.title) %>
         </a>
       </div>
     <% end %>

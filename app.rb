@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
+require 'cgi/escape'
 
 # get '/memo/*' do |name|
 #   "hello #{name}. how are you?"
@@ -13,8 +14,10 @@ class Memo
   end
 end
 
-
-def pick_up_file
+helpers do
+  def escape(text)
+    CGI.escape_html(text)
+  end
 end
 
 # topページへ
@@ -32,6 +35,8 @@ end
 post '/memo' do
   memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
   params[:id] = (memos_a[-1]["id"].to_i + 1).to_s
+  user_input_escape(params)
+  binding.irb
   memos_a << params
   File.open('./data/sample.json', "w") do |f|
     JSON.dump(memos_a, f)
