@@ -42,7 +42,16 @@ body {
 .memo_content {
   padding: 20px 10px;
 }
-
-section {
-
+.delete_box {
+  margin-right: 10px;
+  background-color: black;
+  padding: 10px;
+}
+.delete_submit {
+  font-size: 18px;
+  background: none;
+  border: none;
+  outline: none;
+  color:white;
+  cursor: pointer;
 }

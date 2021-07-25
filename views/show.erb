@@ -20,9 +20,10 @@
     <div class="edit_btn">
       <a class="btn" href=<%="/memo/#{@memo.id}/edit"%>>edit</a>
     </div>
-    <div class="edit_btn">
-      <a class="btn" href=<%="/memo/#{@memo.id}"%> method="delete">delete</a>
-    </div>
+    <form class="delete_box" method="post" action=<%="/memo/#{@memo.id}"%>>
+      <input type="hidden" name="_method" value="delete">
+      <input class="delete_submit" type="submit" value="delete">
+    </form>
   </div>
 </section>
 
