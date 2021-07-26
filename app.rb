@@ -12,10 +12,10 @@ class Memo
 
   conn = PG.connect( dbname: 'try_sinatra_db' )
   conn.exec( "SELECT * FROM memos" ) do |result|
-    puts "     memo_id | title             | text | created_at | updated_at"
+    puts "     memo_id | title             | text"
     result.each do |row|
       puts " %7d | %-16s | %s " %
-        row.values_at('memo_id', 'title', 'text', 'created_at', 'updated_at', 'query')
+        row.values_at('memo_id', 'title', 'text', 'query')
     end
   end
 
@@ -37,11 +37,37 @@ class Memo
     end
   end
 
-  def create
+  def self.create(params)
+    conn = PG.connect( dbname: 'try_sinatra_db' )
+    title = params["title"]
+    text = params["text"]
     conn.exec(
-      "INSERT INTO memos VALUES ('id', 'title', 'text', 'created_at', 'updated_at')"
+      "INSERT INTO memos (title, text) VALUES ('#{title}', '#{text}')"
     )
   end
+
+  def self.find(id)
+    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn.exec("SELECT * FROM memos WHERE memo_id = '#{id}'") do |r|
+      memo = Memo.new
+      r.each do |row|  
+          memo.id = row["memo_id"]
+          memo.title = row["title"]
+          memo.text = row["text"]
+      end
+      memo
+    end
+  end
+
+  def self.update(params)
+    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn.exec("
+      UPDATE memos
+      SET title = '#{params["title"]}', text = '#{params["text"]}'
+      WHERE memo_id = '#{params["id"]}'
+      ")
+  end
+
 end
 
 helpers do
@@ -56,8 +82,6 @@ end
 
 # topページへ
 get '/memo' do
-  # memos = JSON::Parser.new(File.open('./data/sample.json').read, object_class: Memo)
-  # @memos = memos.parse
   @memos = Memo.all
   erb :index
 end
@@ -67,20 +91,12 @@ get '/memo/new' do
 end
 # 投稿の保存処理
 post '/memo' do
-  memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  params[:id] = (memos_a[-1]['id'].to_i + 1).to_s
-  user_input_escape(params)
-  memos_a << params
-  File.open('./data/sample.json', 'w') do |f|
-    JSON.dump(memos_a, f)
-  end
+  Memo.create(params)
   redirect to('/memo')
 end
 # 詳細ページへ
 get '/memo/:id' do
-  memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  memo = memos.select { |n| n['id'] == params[:id] }
-  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
+  @memo = Memo.find(params[:id])
   erb :show
 end
 # 削除処理
@@ -94,17 +110,16 @@ delete '/memo/:id' do
 end
 # 編集ページへ
 get '/memo/:id/edit' do
-  memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  memo = memos.select { |n| n['id'] == params[:id] }
-  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
+  @memo = Memo.find(params[:id])
   erb :edit
 end
 # 編集処理
 patch '/memo/:id' do
-  memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  memos_a.map! { |a| a['id'] == params['id'] ? params : a }
-  File.open('./data/sample.json', 'w') do |f|
-    JSON.dump(memos_a, f)
-  end
+  # memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
+  # memos_a.map! { |a| a['id'] == params['id'] ? params : a }
+  # File.open('./data/sample.json', 'w') do |f|
+  #   JSON.dump(memos_a, f)
+  # end
+  Memo.update(params)
   redirect to('/memo')
 end
