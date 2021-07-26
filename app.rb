@@ -5,6 +5,15 @@ require 'sinatra/reloader'
 require 'json'
 require 'cgi/escape'
 
+helpers do
+  def escape(text)
+    CGI.escape_html(text)
+  end
+end
+
+error 404 do
+  status 404
+end
 
 class Memo
   require 'pg'
@@ -19,9 +28,13 @@ class Memo
     end
   end
 
-  # def []=(key, value)
-  #   instance_variable_set("@#{key}", value)
-  # end
+  def self.escape(text)
+    CGI.escape_html(text)
+  end
+
+  def self.unescape(text)
+    CGI.unescape_html(text)
+  end
 
   def self.all
     conn = PG.connect( dbname: 'try_sinatra_db' )
@@ -29,8 +42,8 @@ class Memo
       memos = r.map do |row|
         memo = Memo.new
         memo.id = row["memo_id"]
-        memo.title = row["title"]
-        memo.text = row["text"]
+        memo.title = unescape(row["title"])
+        memo.text = unescape(row["text"])
         memo
       end
       memos
@@ -42,7 +55,7 @@ class Memo
     title = params["title"]
     text = params["text"]
     conn.exec(
-      "INSERT INTO memos (title, text) VALUES ('#{title}', '#{text}')"
+      "INSERT INTO memos (title, text) VALUES ('#{escape(title)}', '#{escape(text)}')"
     )
   end
 
@@ -52,8 +65,8 @@ class Memo
       memo = Memo.new
       r.each do |row|  
           memo.id = row["memo_id"]
-          memo.title = row["title"]
-          memo.text = row["text"]
+          memo.title = unescape(row["title"])
+          memo.text = unescape(row["text"])
       end
       memo
     end
@@ -63,7 +76,7 @@ class Memo
     conn = PG.connect( dbname: 'try_sinatra_db' )
     conn.exec("
       UPDATE memos
-      SET title = '#{params["title"]}', text = '#{params["text"]}'
+      SET title = '#{escape(params["title"])}', text = '#{escape(params["text"])}'
       WHERE memo_id = '#{params["id"]}'
       ")
   end
@@ -75,16 +88,6 @@ class Memo
       WHERE memo_id = '#{id}'
       ")
   end
-end
-
-helpers do
-  def escape(text)
-    CGI.escape_html(text)
-  end
-end
-
-error 404 do
-  status 404
 end
 
 # topページへ
