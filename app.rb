@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
@@ -19,15 +17,6 @@ class Memo
   require 'pg'
   attr_accessor :id, :text, :title
 
-  conn = PG.connect( dbname: 'try_sinatra_db' )
-  conn.exec( "SELECT * FROM memos" ) do |result|
-    puts "     memo_id | title             | text"
-    result.each do |row|
-      puts " %7d | %-16s | %s " %
-        row.values_at('memo_id', 'title', 'text', 'query')
-    end
-  end
-
   def self.escape(text)
     CGI.escape_html(text)
   end
@@ -37,13 +26,13 @@ class Memo
   end
 
   def self.all
-    conn = PG.connect( dbname: 'try_sinatra_db' )
-    conn.exec("SELECT * FROM memos") do |r|
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    conn.exec('SELECT * FROM memos') do |r|
       memos = r.map do |row|
         memo = Memo.new
-        memo.id = row["memo_id"]
-        memo.title = unescape(row["title"])
-        memo.text = unescape(row["text"])
+        memo.id = row['memo_id']
+        memo.title = unescape(row['title'])
+        memo.text = unescape(row['text'])
         memo
       end
       memos
@@ -51,38 +40,38 @@ class Memo
   end
 
   def self.create(params)
-    conn = PG.connect( dbname: 'try_sinatra_db' )
-    title = params["title"]
-    text = params["text"]
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    title = params['title']
+    text = params['text']
     conn.exec(
       "INSERT INTO memos (title, text) VALUES ('#{escape(title)}', '#{escape(text)}')"
     )
   end
 
   def self.find(id)
-    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("SELECT * FROM memos WHERE memo_id = '#{id}'") do |r|
       memo = Memo.new
-      r.each do |row|  
-          memo.id = row["memo_id"]
-          memo.title = unescape(row["title"])
-          memo.text = unescape(row["text"])
+      r.each do |row|
+        memo.id = row['memo_id']
+        memo.title = unescape(row['title'])
+        memo.text = unescape(row['text'])
       end
       memo
     end
   end
 
   def self.update(params)
-    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("
       UPDATE memos
-      SET title = '#{escape(params["title"])}', text = '#{escape(params["text"])}'
-      WHERE memo_id = '#{params["id"]}'
+      SET title = '#{escape(params['title'])}', text = '#{escape(params['text'])}'
+      WHERE memo_id = '#{params['id']}'
       ")
   end
 
   def self.destroy(id)
-    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("
       DELETE FROM memos
       WHERE memo_id = '#{id}'
