@@ -9,3 +9,4 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 
 gem 'webrick'
+gem 'pg'

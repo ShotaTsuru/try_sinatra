@@ -5,11 +5,42 @@ require 'sinatra/reloader'
 require 'json'
 require 'cgi/escape'
 
+
 class Memo
+  require 'pg'
   attr_accessor :id, :text, :title
 
-  def []=(key, value)
-    instance_variable_set("@#{key}", value)
+  conn = PG.connect( dbname: 'try_sinatra_db' )
+  conn.exec( "SELECT * FROM memos" ) do |result|
+    puts "     memo_id | title             | text | created_at | updated_at"
+    result.each do |row|
+      puts " %7d | %-16s | %s " %
+        row.values_at('memo_id', 'title', 'text', 'created_at', 'updated_at', 'query')
+    end
+  end
+
+  # def []=(key, value)
+  #   instance_variable_set("@#{key}", value)
+  # end
+
+  def self.all
+    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn.exec("SELECT * FROM memos") do |r|
+      memos = r.map do |row|
+        memo = Memo.new
+        memo.id = row["memo_id"]
+        memo.title = row["title"]
+        memo.text = row["text"]
+        memo
+      end
+      memos
+    end
+  end
+
+  def create
+    conn.exec(
+      "INSERT INTO memos VALUES ('id', 'title', 'text', 'created_at', 'updated_at')"
+    )
   end
 end
 
@@ -25,8 +56,9 @@ end
 
 # topページへ
 get '/memo' do
-  memos = JSON::Parser.new(File.open('./data/sample.json').read, object_class: Memo)
-  @memos = memos.parse
+  # memos = JSON::Parser.new(File.open('./data/sample.json').read, object_class: Memo)
+  # @memos = memos.parse
+  @memos = Memo.all
   erb :index
 end
 # 新規投稿ページへ
