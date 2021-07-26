@@ -68,6 +68,13 @@ class Memo
       ")
   end
 
+  def self.destroy(id)
+    conn = PG.connect( dbname: 'try_sinatra_db' )
+    conn.exec("
+      DELETE FROM memos
+      WHERE memo_id = '#{id}'
+      ")
+  end
 end
 
 helpers do
@@ -101,11 +108,7 @@ get '/memo/:id' do
 end
 # 削除処理
 delete '/memo/:id' do
-  memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  memos_a = memos.delete_if { |n| n['id'] == params[:id] }
-  File.open('./data/sample.json', 'w') do |f|
-    JSON.dump(memos_a, f)
-  end
+  Memo.destroy(params[:id])
   redirect to('/memo')
 end
 # 編集ページへ
@@ -115,11 +118,6 @@ get '/memo/:id/edit' do
 end
 # 編集処理
 patch '/memo/:id' do
-  # memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  # memos_a.map! { |a| a['id'] == params['id'] ? params : a }
-  # File.open('./data/sample.json', 'w') do |f|
-  #   JSON.dump(memos_a, f)
-  # end
   Memo.update(params)
   redirect to('/memo')
 end
