@@ -36,8 +36,11 @@ end
 # 投稿の保存処理
 post '/memo' do
   memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
-  params[:id] = (memos_a[-1]['id'].to_i + 1).to_s
-  user_input_escape(params)
+  if memos_a.empty?
+    params[:id] = "1"
+  else
+    params[:id] = (memos_a[-1]['id'].to_i + 1).to_s
+  end
   memos_a << params
   File.open('./data/sample.json', 'w') do |f|
     JSON.dump(memos_a, f)
