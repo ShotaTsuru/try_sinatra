@@ -18,11 +18,13 @@ https://i.gyazo.com/f4216b3587eed93ce958f0b92ef898a7.gif
 
 # Usage
 ```bash
-#任意のフォルダに
+# 任意のフォルダに
 git clone 
-#cloneしたフォルダへ移動
+# cloneしたフォルダへ移動
 cd try_sinatra
-#sinatraサーバーの立ち上げ
+# gemのセッティング
+bundle install
+# sinatraサーバーの立ち上げ
 bundle exec ruby app.rb
 # http://localhost:4567/memo へアクセス
 ```
