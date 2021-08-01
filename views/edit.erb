@@ -1,0 +1,23 @@
+<header>
+  <div class="header_box">
+    <h1> memo</h1>
+  </div>
+</header>
+
+<form method="post" action=<%="/memo/#{@memo.id}"%>>
+  <div>
+    <label>title</label>
+    <input type="text" id="title" name="title" value="<%= escape(@memo.title) %>">
+  </div>
+   <div>
+    <textarea id="text" name="text"><%= escape(@memo.text)%></textarea>
+  </div>
+  <input type="hidden" name="_method" value="patch">
+  <div>
+    <input type="submit" value="UPDATE">
+  </div>
+</form>
+
+<div>
+  <a href="/memo">topページ</a>
+</div>

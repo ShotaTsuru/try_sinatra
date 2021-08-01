@@ -1,0 +1,32 @@
+<header>
+  <div class="header_box">
+    <h1> memo</h1>
+    <div class="add_btn">
+      <a class="btn" href="/memo/new">add memo</a>
+    </div>
+  </div>
+</header>
+<section class="text">
+  <h2>
+    <%= escape(@memo.title) %>
+  </h2>
+  <div>
+    <%= escape(@memo.text) %>
+  </div>
+</section>
+
+<section>
+  <div class=edit_box>
+    <div class="edit_btn">
+      <a class="btn" href=<%="/memo/#{@memo.id}/edit"%>>edit</a>
+    </div>
+    <form class="delete_box" method="post" action=<%="/memo/#{@memo.id}"%>>
+      <input type="hidden" name="_method" value="delete">
+      <input class="delete_submit" type="submit" value="delete">
+    </form>
+  </div>
+</section>
+
+<div>
+  <a href="/memo">topページ</a>
+</div>
