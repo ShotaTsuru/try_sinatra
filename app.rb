@@ -29,10 +29,12 @@ get '/memo' do
   @memos = memos.parse
   erb :index
 end
+
 # 新規投稿ページへ
 get '/memo/new' do
   erb :new
 end
+
 # 投稿の保存処理
 post '/memo' do
   memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
@@ -47,6 +49,7 @@ post '/memo' do
   end
   redirect to('/memo')
 end
+
 # 詳細ページへ
 get '/memo/:id' do
   memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
@@ -54,6 +57,7 @@ get '/memo/:id' do
   @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
   erb :show
 end
+
 # 削除処理
 delete '/memo/:id' do
   memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
@@ -63,6 +67,7 @@ delete '/memo/:id' do
   end
   redirect to('/memo')
 end
+
 # 編集ページへ
 get '/memo/:id/edit' do
   memos = JSON::Parser.new(File.open('./data/sample.json').read).parse
@@ -70,6 +75,7 @@ get '/memo/:id/edit' do
   @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
   erb :edit
 end
+
 # 編集処理
 patch '/memo/:id' do
   memos_a = JSON::Parser.new(File.open('./data/sample.json').read).parse
