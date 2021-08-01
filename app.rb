@@ -84,30 +84,36 @@ get '/memo' do
   @memos = Memo.all
   erb :index
 end
+
 # 新規投稿ページへ
 get '/memo/new' do
   erb :new
 end
+
 # 投稿の保存処理
 post '/memo' do
   Memo.create(params)
   redirect to('/memo')
 end
+
 # 詳細ページへ
 get '/memo/:id' do
   @memo = Memo.find(params[:id])
   erb :show
 end
+
 # 削除処理
 delete '/memo/:id' do
   Memo.destroy(params[:id])
   redirect to('/memo')
 end
+
 # 編集ページへ
 get '/memo/:id/edit' do
   @memo = Memo.find(params[:id])
   erb :edit
 end
+
 # 編集処理
 patch '/memo/:id' do
   Memo.update(params)
