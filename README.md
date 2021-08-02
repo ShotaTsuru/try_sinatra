@@ -18,14 +18,16 @@ https://i.gyazo.com/f4216b3587eed93ce958f0b92ef898a7.gif
 
 # DB setting 
 DBにpostgreSQLを使用していますので、postgreSQLの環境で以下の準備をしてください。
-'try_sinatra_db'データベースの作成
+```bash
+# 'try_sinatra_db'データベースの作成
 create database try_sinatra_db;
-'memos'テーブルの作成
+# 'memos'テーブルの作成
 create table mybook (
   memo_id integer, 
   title varchar(100)
   text text
 );
+```
 
 # Usage
 ```bash
