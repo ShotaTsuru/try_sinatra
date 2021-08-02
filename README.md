@@ -14,9 +14,18 @@ https://i.gyazo.com/f4216b3587eed93ce958f0b92ef898a7.gif
 最低限必要なものを実装。
 ・XSS対策済み。
 ・CSSは黒と白でシンプルに
+・CSSは黒と白でシンプルにSQLインジェクション対策済み
 
-# Requirement
-
+# DB setting 
+DBにpostgreSQLを使用していますので、postgreSQLの環境で以下の準備をしてください。
+'try_sinatra_db'データベースの作成
+create database try_sinatra_db;
+'memos'テーブルの作成
+create table mybook (
+  memo_id integer, 
+  title varchar(100)
+  text text
+);
 
 # Usage
 ```bash
