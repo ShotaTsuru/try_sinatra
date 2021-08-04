@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'sinatra/reloader'
 require 'json'
@@ -15,7 +17,12 @@ end
 
 class Memo
   require 'pg'
-  attr_accessor :id, :text, :title
+  attr_accessor :id, :title,  :text
+  def initialize(memo_contents)
+    @id = memo_contents['memo_id']
+    @title = memo_contents['title']
+    @text = memo_contents['text']
+  end
 
   def self.escape(text)
     CGI.escape_html(text)
@@ -29,10 +36,7 @@ class Memo
     conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec('SELECT * FROM memos') do |r|
       memos = r.map do |row|
-        memo = Memo.new
-        memo.id = row['memo_id']
-        memo.title = unescape(row['title'])
-        memo.text = unescape(row['text'])
+        memo = Memo.new(row)
         memo
       end
       memos
@@ -44,19 +48,14 @@ class Memo
     title = params['title']
     text = params['text']
     conn.exec(
-      "INSERT INTO memos (title, text) VALUES ('#{escape(title)}', '#{escape(text)}')"
+      "INSERT INTO memos (title, text) VALUES ('#{title}', '#{text}')"
     )
   end
 
   def self.find(id)
     conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("SELECT * FROM memos WHERE memo_id = '#{id}'") do |r|
-      memo = Memo.new
-      r.each do |row|
-        memo.id = row['memo_id']
-        memo.title = unescape(row['title'])
-        memo.text = unescape(row['text'])
-      end
+      memo = Memo.new(r[0])
       memo
     end
   end
@@ -65,7 +64,7 @@ class Memo
     conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("
       UPDATE memos
-      SET title = '#{escape(params['title'])}', text = '#{escape(params['text'])}'
+      SET title = '#{params['title'])}', text = '#{params['text']}'
       WHERE memo_id = '#{params['id']}'
       ")
   end

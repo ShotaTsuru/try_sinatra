@@ -22,9 +22,9 @@ DBにpostgreSQLを使用していますので、postgreSQLの環境で以下の�
 # 'try_sinatra_db'データベースの作成
 create database try_sinatra_db;
 # 'memos'テーブルの作成
-create table mybook (
+create table memos (
   memo_id integer, 
-  title varchar(100)
+  title varchar(100),
   text text
 );
 ```
