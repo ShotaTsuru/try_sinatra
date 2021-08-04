@@ -17,7 +17,8 @@ end
 
 class Memo
   require 'pg'
-  attr_accessor :id, :title,  :text
+  attr_accessor :id, :title, :text
+
   def initialize(memo_contents)
     @id = memo_contents['memo_id']
     @title = memo_contents['title']
@@ -64,7 +65,7 @@ class Memo
     conn = PG.connect(dbname: 'try_sinatra_db')
     conn.exec("
       UPDATE memos
-      SET title = '#{params['title'])}', text = '#{params['text']}'
+      SET title = '#{params['title']}', text = '#{params['text']}'
       WHERE memo_id = '#{params['id']}'
       ")
   end
