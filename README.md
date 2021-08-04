@@ -23,7 +23,7 @@ DBにpostgreSQLを使用していますので、postgreSQLの環境で以下の�
 create database try_sinatra_db;
 # 'memos'テーブルの作成
 create table memos (
-  memo_id integer, 
+  memo_id serial, 
   title varchar(100),
   text text
 );
