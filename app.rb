@@ -48,9 +48,11 @@ class Memo
     conn = PG.connect(dbname: 'try_sinatra_db')
     title = params['title']
     text = params['text']
-    conn.exec(
-      "INSERT INTO memos (title, text) VALUES ('#{title}', '#{text}')"
+    conn.prepare(
+      'statemanet1',
+      'INSERT INTO memos (title, text) VALUES ($1, $2)'
     )
+    conn.exec_prepared('statemanet1', [title, text])
   end
 
   def self.find(id)
@@ -63,11 +65,13 @@ class Memo
 
   def self.update(params)
     conn = PG.connect(dbname: 'try_sinatra_db')
-    conn.exec("
-      UPDATE memos
-      SET title = '#{params['title']}', text = '#{params['text']}'
-      WHERE memo_id = '#{params['id']}'
-      ")
+    # conn.exec("
+    #   UPDATE memos
+    #   SET title = '#{params['title']}', text = '#{params['text']}'
+    #   WHERE memo_id = '#{params['id']}'
+    #   ")
+    conn.prepare('statement1', 'UPDATE memos SET title = $1, text = $2 WHERE memo_id = $3')
+    conn.exec_prepared('statement1', [params['title'], params['text'], params['id']])
   end
 
   def self.destroy(id)
