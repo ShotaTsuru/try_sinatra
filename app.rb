@@ -5,14 +5,6 @@ require 'sinatra/reloader'
 require 'json'
 require 'cgi/escape'
 
-class Memo
-  attr_accessor :id, :text, :title
-
-  def []=(key, value)
-    instance_variable_set("@#{key}", value)
-  end
-end
-
 helpers do
   def escape(text)
     CGI.escape_html(text)
@@ -23,10 +15,72 @@ error 404 do
   status 404
 end
 
+class Memo
+  require 'pg'
+  attr_accessor :id, :title, :text
+
+  def initialize(memo_contents)
+    @id = memo_contents['memo_id']
+    @title = memo_contents['title']
+    @text = memo_contents['text']
+  end
+
+  def self.escape(text)
+    CGI.escape_html(text)
+  end
+
+  def self.unescape(text)
+    CGI.unescape_html(text)
+  end
+
+  def self.all
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    conn.exec('SELECT * FROM memos ORDER BY memo_id') do |r|
+      memos = r.map do |row|
+        memo = Memo.new(row)
+        memo
+      end
+      memos
+    end
+  end
+
+  def self.create(params)
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    title = params['title']
+    text = params['text']
+    conn.prepare(
+      'statemanet1',
+      'INSERT INTO memos (title, text) VALUES ($1, $2)'
+    )
+    conn.exec_prepared('statemanet1', [title, text])
+  end
+
+  def self.find(id)
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    conn.exec("SELECT * FROM memos WHERE memo_id = '#{id}'") do |r|
+      memo = Memo.new(r[0])
+      memo
+    end
+  end
+
+  def self.update(params)
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    conn.prepare('statement1', 'UPDATE memos SET title = $1, text = $2 WHERE memo_id = $3')
+    conn.exec_prepared('statement1', [params['title'], params['text'], params['id']])
+  end
+
+  def self.destroy(id)
+    conn = PG.connect(dbname: 'try_sinatra_db')
+    conn.exec("
+      DELETE FROM memos
+      WHERE memo_id = '#{id}'
+      ")
+  end
+end
+
 # topページへ
 get '/memo' do
-  parser = JSON::Parser.new(File.open('./data/database_file.json').read, object_class: Memo)
-  @memos = parser.parse
+  @memos = Memo.all
   erb :index
 end
 
@@ -37,51 +91,30 @@ end
 
 # 投稿の保存処理
 post '/memo' do
-  memos = JSON::Parser.new(File.open('./data/database_file.json').read).parse
-  params[:id] = if memos.empty?
-                  '1'
-                else
-                  (memos[-1]['id'].to_i + 1).to_s
-                end
-  memos << params
-  File.open('./data/database_file.json', 'w') do |f|
-    JSON.dump(memos, f)
-  end
+  Memo.create(params)
   redirect to('/memo')
 end
 
 # 詳細ページへ
 get '/memo/:id' do
-  memos = JSON::Parser.new(File.open('./data/database_file.json').read).parse
-  memo = memos.select { |n| n['id'] == params[:id] }
-  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
+  @memo = Memo.find(params[:id])
   erb :show
 end
 
 # 削除処理
 delete '/memo/:id' do
-  memos = JSON::Parser.new(File.open('./data/database_file.json').read).parse
-  memos.delete_if { |n| n['id'] == params[:id] }
-  File.open('./data/database_file.json', 'w') do |f|
-    JSON.dump(memos, f)
-  end
+  Memo.destroy(params[:id])
   redirect to('/memo')
 end
 
 # 編集ページへ
 get '/memo/:id/edit' do
-  memos = JSON::Parser.new(File.open('./data/database_file.json').read).parse
-  memo = memos.select { |n| n['id'] == params[:id] }
-  @memo = JSON.parse(memo.to_json, object_class: Memo)[0]
+  @memo = Memo.find(params[:id])
   erb :edit
 end
 
 # 編集処理
 patch '/memo/:id' do
-  memos = JSON::Parser.new(File.open('./data/database_file.json').read).parse
-  memos.map! { |a| a['id'] == params['id'] ? params : a }
-  File.open('./data/database_file.json', 'w') do |f|
-    JSON.dump(memos, f)
-  end
+  Memo.update(params)
   redirect to('/memo')
 end

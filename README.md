@@ -14,9 +14,28 @@ https://i.gyazo.com/f4216b3587eed93ce958f0b92ef898a7.gif
 最低限必要なものを実装。
 ・XSS対策済み。
 ・CSSは黒と白でシンプルに
+・CSSは黒と白でシンプルにSQLインジェクション対策済み
 
-# Requirement
-
+# DB setting 
+DBにpostgreSQLを使用していますので、postgreSQLの環境で以下の準備をしてください。
+```
+# postgresを起動
+$ psql -d postgres
+# 'try_sinatra_db'データベースの作成
+postgres=# create database try_sinatra_db;
+# postgresを停止
+postgres=# exit
+# try_sinatra_dbを起動
+$ psql -d try_sinatra_db;
+# 'memos'テーブルの作成
+try_sinatra_db2=# create table memos (
+  memo_id serial, 
+  title varchar(100),
+  text text
+);
+# テーブルが作成できているか確認
+try_sinatra_db2=# select * from memos;
+```
 
 # Usage
 ```bash
@@ -37,4 +56,4 @@ bundle exec ruby app.rb
 
 # Author
 
-作成者　鶴 翔太
+作成者 鶴 翔太
