@@ -65,11 +65,6 @@ class Memo
 
   def self.update(params)
     conn = PG.connect(dbname: 'try_sinatra_db')
-    # conn.exec("
-    #   UPDATE memos
-    #   SET title = '#{params['title']}', text = '#{params['text']}'
-    #   WHERE memo_id = '#{params['id']}'
-    #   ")
     conn.prepare('statement1', 'UPDATE memos SET title = $1, text = $2 WHERE memo_id = $3')
     conn.exec_prepared('statement1', [params['title'], params['text'], params['id']])
   end
