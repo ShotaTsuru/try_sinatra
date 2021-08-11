@@ -35,7 +35,7 @@ class Memo
 
   def self.all
     conn = PG.connect(dbname: 'try_sinatra_db')
-    conn.exec('SELECT * FROM memos') do |r|
+    conn.exec('SELECT * FROM memos ORDER BY memo_id') do |r|
       memos = r.map do |row|
         memo = Memo.new(row)
         memo
